@@ -70,8 +70,13 @@ window.addEventListener("load", async (e)=>{
 		const id_list = Object.keys(ls_key_list);
 		for (let i = 0; i < id_list.length; i++) {
 			const id = id_list[i];
+
+			l = LOAD_WAIT_PRINT("鍵「"+id+"」を読み込み...");
+
 			const key = decode_base64(ls_key_list[id]);
 			key_list[id] = await crypto.subtle.importKey("raw", key, {name: "AES-GCM"}, true, ["encrypt", "decrypt"]);
+
+			LOAD_WAIT_STOP(l, "OK");
 		}
 
 		close_load();
