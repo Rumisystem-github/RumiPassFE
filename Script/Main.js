@@ -65,9 +65,34 @@ window.addEventListener("load", async (e)=>{
 			return;
 		}
 
+		//鍵をロード
+		const ls_key_list = JSON.parse(localStorage.getItem(local_storage_key.KeyList));
+		const id_list = Object.keys(ls_key_list);
+		for (let i = 0; i < id_list.length; i++) {
+			const id = id_list[i];
+			const key = decode_base64(ls_key_list[id]);
+			key_list[id] = await crypto.subtle.importKey("raw", key, {name: "AES-GCM"}, true, ["encrypt", "decrypt"]);
+		}
+
 		close_load();
 	} catch(ex) {
 		console.error(ex);
 		LOAD_WAIT_STOP(l, "FAILED");
 	}
 });
+
+function encode_base64(input) {
+	return btoa(String.fromCharCode(...new Uint8Array(input)));
+}
+
+function decode_base64(input) {
+	const binary = atob(input);
+	const length = binary.length;
+	const byte_list = new Uint8Array(length);
+
+	for (let i = 0; i < length; i++) {
+		byte_list[i] = binary.charCodeAt(i);
+	}
+
+	return byte_list;
+}

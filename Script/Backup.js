@@ -3,7 +3,7 @@ async function backup_and_download() {
 	const key_id_list = Object.keys(key_list);
 	for (let i = 0; i < key_id_list.length; i++) {
 		const id = key_id_list[i];
-		list[id] = btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.exportKey("raw", key_list[id]))));
+		list[id] = encode_base64(await crypto.subtle.exportKey("raw", key_list[id]));
 	}
 
 	const contents = JSON.stringify(
