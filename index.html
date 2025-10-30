@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<HTML>
+	<HEAD>
+		<TITLE>るみストレージ</TITLE>
+
+		<!--るみ鯖のデフォ-->
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/reset.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/font.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/DEFAULT.css">
+		<LINK REL="stylesheet" HREF="https://cdn.rumia.me/CSS/icon.css">
+
+
+		<LINK REL="stylesheet" HREF="/Style/Main.css">
+	</HEAD>
+	<BODY>
+		<!--読み込み画面-->
+		<DIV ID="LOADING_DISPLAY" STYLE="position: fixed; top: 0px; left: 0px; width: 100vw; height: 100vh; background-color: white; z-index: 1;"><PRE ID="LOADING_DISPLAY_LOG"></PRE></DIV>
+
+		<!--セットアップ画面-->
+		<DIV CLASS="SETUP_DISPLAY" ID="SETUP_DISPLAY" STYLE="display: none;">
+			<DIV ID="SETUP_DONE" STYLE="display: none;">
+				<H2>初期設定が完了しました。</H2>
+				本サービスは自動で暗号化してパスワードを保存するため、他の端末で閲覧する場合や、端末移行をする場合、構成ファイルが必要に成ります。<BR>
+				構成ファイルをダウンロードしますか？<BR>
+				※設定画面からいつでもダウンロードすることができます。<BR>
+				<BR>
+				<BUTTON ID="SETUP_DONE_DOWNLOAD">ダウンロード</BUTTON>
+				<BR>
+				<BR>
+				不要な場合は、再読み込みをしてください。
+			</DIV>
+			<DIV ID="SETUP_IMPORT" STYLE="display: none;">
+				
+			</DIV>
+		</DIV>
+	</BODY>
+
+	<!--<SCRIPT SRC="https://cdn.rumia.me/LIB/RSPA.js?V=1.0"></SCRIPT>-->
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/LOADING.js?V=LATEST"></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/DIALOG.js?V=LATEST"></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/COOKIE.js?V=LATEST"></SCRIPT>
+	<SCRIPT SRC="https://cdn.rumia.me/LIB/Login.js?V=LATEST"></SCRIPT>
+	<SCRIPT SRC="/Script/openpgp.min.js"></SCRIPT>
+
+	<SCRIPT SRC="/Script/Loading.js"></SCRIPT>
+	<SCRIPT SRC="/Script/Setup.js"></SCRIPT>
+	<SCRIPT SRC="/Script/Main.js" defer></SCRIPT>
+</HTML>
