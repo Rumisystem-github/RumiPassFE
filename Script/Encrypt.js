@@ -16,7 +16,7 @@ function random_select_key() {
  * @returns 
  */
 async function encrypt_text(key, text) {
-	const encoded = new TextEncoder().encode(input);
+	const encoded = new TextEncoder().encode(text);
 	return await encrypt(key, encoded);
 }
 

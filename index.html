@@ -33,6 +33,17 @@
 				<!--TODO:インポート部分を作る-->
 			</DIV>
 		</DIV>
+
+		<DIV>
+			<BUTTON onclick="create_site_button();">+</BUTTON>
+		</DIV>
+
+		<DIV CLASS="SITE_DIR_LIST" ID="SITE_DIR_LIST"></DIV>
+
+		<DIV CLASS="SITE_VIEWER" ID="SITE_VIEWER" STYLE="display: none;">
+			<DIV CLASS="NAME" ID="SITE_VIEWER_NAME"></DIV>
+			<DIV CLASS="DATA_LIST" ID="SITE_VIEWER_DATA_LIST"></DIV>
+		</DIV>
 	</BODY>
 
 	<!--<SCRIPT SRC="https://cdn.rumia.me/LIB/RSPA.js?V=1.0"></SCRIPT>-->
@@ -43,6 +54,8 @@
 	<!--<SCRIPT SRC="/Script/openpgp.min.js"></SCRIPT>-->
 
 	<SCRIPT SRC="/Script/Loading.js"></SCRIPT>
+	<SCRIPT SRC="/Script/SiteDataType.js"></SCRIPT>
+	<SCRIPT SRC="/Script/API.js"></SCRIPT>
 	<SCRIPT SRC="/Script/Setup.js"></SCRIPT>
 	<SCRIPT SRC="/Script/Encrypt.js"></SCRIPT>
 	<SCRIPT SRC="/Script/Main.js" defer></SCRIPT>
