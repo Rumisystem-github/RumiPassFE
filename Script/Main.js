@@ -88,7 +88,7 @@ window.addEventListener("load", async (e)=>{
 
 		//サイト一覧をロード
 		l = LOAD_WAIT_PRINT("サイト一覧をロード中");
-		site_list["master"] = await get_site_list();
+		await reload_site_list();
 		refresh_site_list();
 		LOAD_WAIT_STOP(l, "OK");
 
@@ -116,7 +116,20 @@ function decode_base64(input) {
 }
 
 async function create_site_button() {
-	await create_site("テスト", random_select_key().id);
+	const q = await dialog.INPUT("サイトを追加", {TYPE:"TEXT", "NAME":"名前"});
+	if (q == null) return;
+	if (q == "") return;
+
+	//作成
+	await create_site(q, random_select_key().id);
+
+	//リロード
+	await reload_site_list();
+	refresh_site_list();
+}
+
+async function reload_site_list() {
+	site_list["master"] = await get_site_list();
 }
 
 function refresh_site_list() {
