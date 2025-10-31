@@ -38,11 +38,27 @@
 			<BUTTON onclick="create_site_button();">+</BUTTON>
 		</DIV>
 
+		<!--サイト一覧閲覧-->
 		<DIV CLASS="SITE_DIR_LIST" ID="SITE_DIR_LIST"></DIV>
 
+		<!--データ閲覧-->
 		<DIV CLASS="SITE_VIEWER" ID="SITE_VIEWER" STYLE="display: none;">
 			<DIV CLASS="NAME" ID="SITE_VIEWER_NAME"></DIV>
 			<DIV CLASS="DATA_LIST" ID="SITE_VIEWER_DATA_LIST"></DIV>
+		</DIV>
+
+		<!--データ編集-->
+		<DIV CLASS="SITE_EDITOR" ID="SITE_EDITOR" STYLE="display: none;">
+			<INPUT ID="SITE_EDITOR_NAME">
+
+			<TABLE ID="SITE_EDITOR_DATA_LIST"></TABLE>
+
+			<DIV>
+				<BUTTON onclick="site_editor_add_data();">+</BUTTON>
+			</DIV>
+			<DIV>
+				<BUTTON onclick="site_editor_apply();">完了</BUTTON>
+			</DIV>
 		</DIV>
 	</BODY>
 
@@ -54,7 +70,6 @@
 	<!--<SCRIPT SRC="/Script/openpgp.min.js"></SCRIPT>-->
 
 	<SCRIPT SRC="/Script/Loading.js"></SCRIPT>
-	<SCRIPT SRC="/Script/SiteDataType.js"></SCRIPT>
 	<SCRIPT SRC="/Script/API.js"></SCRIPT>
 	<SCRIPT SRC="/Script/Setup.js"></SCRIPT>
 	<SCRIPT SRC="/Script/Encrypt.js"></SCRIPT>

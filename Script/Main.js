@@ -9,6 +9,7 @@ let session = null;
 let self_user = null;
 let key_list = {};
 let site_list = {};
+
 let mel = {
 	setup: {
 		parent: document.getElementById("SETUP_DISPLAY"),
@@ -25,6 +26,11 @@ let mel = {
 		parent: document.getElementById("SITE_VIEWER"),
 		name: document.getElementById("SITE_VIEWER_NAME"),
 		data_list: document.getElementById("SITE_VIEWER_DATA_LIST")
+	},
+	site_editor: {
+		parent: document.getElementById("SITE_EDITOR"),
+		name: document.getElementById("SITE_EDITOR_NAME"),
+		data_list: document.getElementById("SITE_EDITOR_DATA_LIST")
 	}
 };
 
@@ -175,20 +181,17 @@ async function open_site_viewer(id) {
 	mel.site_viewer.name.innerText = r.site.NAME;
 
 	//データリストにデータを
-	const type_list = Object.keys(r.data);
-	for (let i = 0; i < type_list.length; i++) {
-		const type = type_list[i];
-		const data = r.data[type];
+	for (let i = 0; i < r.data.length; i++) {
+		const data = r.data[i];
 		const iv = decode_base64(data.IV);
 		const contents_encrypt = decode_base64(data.CONTENTS);
-
 		const contents_plain = await decrypt_text(crypt_key, iv, contents_encrypt);
 
 		let item = document.createElement("DIV");
 		item.className = "DATA_ITEM";
 
 		let type_el = document.createElement("DIV");
-		type_el.innerText = get_sitedata_type_name(type);
+		type_el.innerText = data.NAME;
 		item.appendChild(type_el);
 
 		let contents_el = document.createElement("INPUT")
@@ -200,6 +203,71 @@ async function open_site_viewer(id) {
 	}
 
 	mel.site_viewer.parent.style.display = "block";
+}
+
+async function open_site_editor(id) {
+	//初期化
+	mel.site_editor.parent.dataset.id = id;
+	mel.site_editor.data_list.replaceChildren();
+
+	const r = await get_site(id);
+	const crypt_key = key_list[r.site.KEY_ID];
+
+	//名前
+	mel.site_editor.name.value = r.site.NAME;
+
+	//データ
+	for (let i = 0; i < r.data.length; i++) {
+		const data = r.data[i];
+		const iv = decode_base64(data.IV);
+		const contents_encrypt = decode_base64(data.CONTENTS);
+		const contents_plain = await decrypt_text(crypt_key, iv, contents_encrypt);
+
+		mel.site_editor.data_list.appendChild(gen_site_editor_data_field(data.NAME, contents_plain));
+	}
+
+	mel.site_editor.parent.style.display = "block";
+}
+
+function site_editor_add_data() {
+	mel.site_editor.data_list.appendChild(gen_site_editor_data_field("", ""));
+}
+
+function gen_site_editor_data_field(name, text) {
+	let tr = document.createElement("TR");
+
+	//タイプ名
+	let name_td = document.createElement("TD");
+	tr.appendChild(name_td);
+
+	let name_input = document.createElement("INPUT");
+	name_input.value = name;
+	name_td.appendChild(name_input);
+
+	//入力欄
+	let input_td = document.createElement("TD");
+	tr.appendChild(input_td);
+
+	let input_el = document.createElement("INPUT");
+	input_el.value = text;
+	input_td.appendChild(input_el);
+
+	//削除ボタン
+	let remove_td = document.createElement("TD");
+	tr.appendChild(remove_td);
+
+	let remove_button =document.createElement("BUTTON");
+	remove_button.innerText = "X";
+	remove_button.addEventListener("click", (e)=>{
+		tr.remove();
+	});
+	remove_td.appendChild(remove_button);
+
+	return tr;
+}
+
+async function site_editor_apply() {
+	const id = mel.site_editor.parent.dataset.id;
 }
 
 /*async function test() {
