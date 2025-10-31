@@ -30,6 +30,7 @@ let mel = {
 	site_editor: {
 		parent: document.getElementById("SITE_EDITOR"),
 		name: document.getElementById("SITE_EDITOR_NAME"),
+		host: document.getElementById("SITE_EDITOR_HOST"),
 		data_list: document.getElementById("SITE_EDITOR_DATA_LIST")
 	}
 };
@@ -216,6 +217,9 @@ async function open_site_editor(id) {
 	//名前
 	mel.site_editor.name.value = r.site.NAME;
 
+	//ホスト名
+	mel.site_editor.host.value = r.site.HOST.join("\n");
+
 	//データ
 	for (let i = 0; i < r.data.length; i++) {
 		const data = r.data[i];
@@ -238,6 +242,7 @@ function gen_site_editor_data_field(name, text) {
 
 	//タイプ名
 	let name_td = document.createElement("TD");
+	name_td.className = "NAME";
 	tr.appendChild(name_td);
 
 	let name_input = document.createElement("INPUT");
@@ -246,6 +251,7 @@ function gen_site_editor_data_field(name, text) {
 
 	//入力欄
 	let input_td = document.createElement("TD");
+	input_td.className = "CONTENTS";
 	tr.appendChild(input_td);
 
 	let input_el = document.createElement("INPUT");
@@ -268,6 +274,39 @@ function gen_site_editor_data_field(name, text) {
 
 async function site_editor_apply() {
 	const id = mel.site_editor.parent.dataset.id;
+
+	const r = await get_site(id);
+	const crypt_key = key_list[r.site.KEY_ID];
+
+	//データ
+	let data_list = [];
+	const data_field_list = mel.site_editor.data_list.childNodes;
+	for (let i = 0; i < data_field_list.length; i++) {
+		const el = data_field_list[i];
+		const name_el = el.querySelector(".NAME");
+		const contents_el = el.querySelector(".CONTENTS");
+		if (name_el == null || contents_el == null) continue;
+
+		const name = name_el.childNodes[0].value;
+		const contents = contents_el.childNodes[0].value;
+		const encrypted = await encrypt_text(crypt_key, contents);
+		data_list.push({
+			"NAME": name,
+			"IV": encode_base64(encrypted.iv),
+			"CONTENTS": encode_base64(encrypted.encrypt)
+		});
+	}
+	await edit_site_data(id, data_list);
+
+	//名前
+	if (r.site.NAME !== mel.site_editor.name.value) {
+		await edit_site_name(id, mel.site_editor.name.value);
+	}
+
+	//ホスト名
+	await edit_site_host(id, mel.site_editor.host.value.split("\n"));
+
+	mel.site_editor.parent.style.display = "none";
 }
 
 /*async function test() {
