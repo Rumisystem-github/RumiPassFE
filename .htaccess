@@ -1,0 +1,9 @@
+#URL書き換えエンジンを有効化(必須)
+RewriteEngine On
+
+#ここでどんなパスでもindex.htmlに行くように
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !/Style/$
+RewriteCond %{REQUEST_URI} !/Script/$
+RewriteRule ^(.*)$ index.html [QSA,L]

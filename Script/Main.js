@@ -5,6 +5,7 @@ const local_storage_key = {
 };
 
 let dialog = new DIALOG_SYSTEM();
+let rspa = new RSPA();
 let session = null;
 let self_user = null;
 let key_list = {};
@@ -100,10 +101,34 @@ window.addEventListener("load", async (e)=>{
 		LOAD_WAIT_STOP(l, "OK");
 
 		close_load();
+
+		rspa.ready();
 	} catch(ex) {
 		console.error(ex);
 		LOAD_WAIT_STOP(l, "FAILED");
 	}
+});
+
+rspa.add_page_change_event_listener((e)=>{
+	mel.site_viewer.parent.style.display = "none";
+	mel.site_editor.parent.style.display = "none";
+});
+
+rspa.set_endpoint("/", ()=>{
+	console.log("/");
+});
+
+
+rspa.set_endpoint("/site/:ID", (e)=>{
+	if (e.param.ID == null || e.param.ID == "") return;
+
+	open_site_viewer(e.param.ID);
+});
+
+rspa.set_endpoint("/edit/:ID", (e)=>{
+	if (e.param.ID == null || e.param.ID == "") return;
+
+	open_site_editor(e.param.ID);
 });
 
 function encode_base64(input) {
@@ -166,6 +191,7 @@ function refresh_site_list() {
 
 			let a = document.createElement("A");
 			a.innerText = site.NAME;
+			a.href = `/site/${site.ID}`;
 			item.appendChild(a);
 		}
 	}
@@ -204,6 +230,14 @@ async function open_site_viewer(id) {
 	}
 
 	mel.site_viewer.parent.style.display = "block";
+}
+
+async function jump_site_editor() {
+	const match = window.location.pathname.match(/\/site\/([A-Za-z0-9-]+)/);
+	if (match == null) return;
+
+	const id = match[1];
+	rspa.open_url(new URL(`${window.location.protocol}//${window.location.hostname}/edit/${id}`));
 }
 
 async function open_site_editor(id) {
@@ -306,7 +340,7 @@ async function site_editor_apply() {
 	//ホスト名
 	await edit_site_host(id, mel.site_editor.host.value.split("\n"));
 
-	mel.site_editor.parent.style.display = "none";
+	rspa.open_url(new URL(`${window.location.protocol}//${window.location.hostname}/site/${id}`));
 }
 
 /*async function test() {
