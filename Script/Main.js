@@ -214,20 +214,30 @@ async function open_site_viewer(id) {
 		const contents_encrypt = decode_base64(data.CONTENTS);
 		const contents_plain = await decrypt_text(crypt_key, iv, contents_encrypt);
 
-		let item = document.createElement("DIV");
+		let item = document.createElement("DETAILS");
 		item.className = "DATA_ITEM";
 
-		let type_el = document.createElement("DIV");
-		type_el.innerText = data.NAME;
-		item.appendChild(type_el);
+		let name_el = document.createElement("SUMMARY");
+		name_el.innerText = data.NAME;
+		item.appendChild(name_el);
 
 		let contents_el = document.createElement("INPUT")
 		contents_el.setAttribute("readonly", "");
 		contents_el.value = contents_plain;
 		item.appendChild(contents_el);
 
+		let copy_button = document.createElement("BUTTON");
+		copy_button.innerText = "コ";
+		copy_button.addEventListener("click", (e)=>{
+			if (navigator.clipboard == null) return;
+			navigator.clipboard.writeText(contents_plain);
+		});
+		item.appendChild(copy_button);
+
 		mel.site_viewer.data_list.appendChild(item);
 	}
+
+	//TOTP
 
 	mel.site_viewer.parent.style.display = "block";
 }

@@ -34,32 +34,40 @@
 			</DIV>
 		</DIV>
 
-		<DIV>
-			<BUTTON onclick="create_site_button();">+</BUTTON>
-		</DIV>
-
-		<!--サイト一覧閲覧-->
-		<DIV CLASS="SITE_DIR_LIST" ID="SITE_DIR_LIST"></DIV>
-
-		<!--データ閲覧-->
-		<DIV CLASS="SITE_VIEWER" ID="SITE_VIEWER" STYLE="display: none;">
-			<BUTTON onclick="jump_site_editor();">編集</BUTTON>
-			<DIV CLASS="NAME" ID="SITE_VIEWER_NAME"></DIV>
-			<DIV CLASS="DATA_LIST" ID="SITE_VIEWER_DATA_LIST"></DIV>
-		</DIV>
-
-		<!--データ編集-->
-		<DIV CLASS="SITE_EDITOR" ID="SITE_EDITOR" STYLE="display: none;">
-			<INPUT ID="SITE_EDITOR_NAME">
-			<TEXTAREA ID="SITE_EDITOR_HOST" PLACEHOLDER="ホスト名"></TEXTAREA>
-
-			<TABLE ID="SITE_EDITOR_DATA_LIST"></TABLE>
-
+		<!--メイン-->
+		<DIV CLASS="SIDE">
 			<DIV>
-				<BUTTON onclick="site_editor_add_data();">+</BUTTON>
+				<H1><A HREF="/">るみパス</A></H1>
 			</DIV>
 			<DIV>
-				<BUTTON onclick="site_editor_apply();">完了</BUTTON>
+				<BUTTON onclick="create_site_button();">+</BUTTON>
+			</DIV>
+
+			<!--サイト一覧閲覧-->
+			<DIV CLASS="SITE_DIR_LIST" ID="SITE_DIR_LIST"></DIV>
+		</DIV>
+
+		<DIV CLASS="MAIN">
+			<!--データ閲覧-->
+			<DIV CLASS="SITE_VIEWER" ID="SITE_VIEWER" STYLE="display: none;">
+				<BUTTON onclick="jump_site_editor();">編集</BUTTON>
+				<DIV CLASS="NAME" ID="SITE_VIEWER_NAME"></DIV>
+				<DIV CLASS="DATA_LIST" ID="SITE_VIEWER_DATA_LIST"></DIV>
+			</DIV>
+
+			<!--データ編集-->
+			<DIV CLASS="SITE_EDITOR" ID="SITE_EDITOR" STYLE="display: none;">
+				<INPUT ID="SITE_EDITOR_NAME">
+				<TEXTAREA ID="SITE_EDITOR_HOST" PLACEHOLDER="ホスト名"></TEXTAREA>
+
+				<TABLE ID="SITE_EDITOR_DATA_LIST"></TABLE>
+
+				<DIV>
+					<BUTTON onclick="site_editor_add_data();">+</BUTTON>
+				</DIV>
+				<DIV>
+					<BUTTON onclick="site_editor_apply();">完了</BUTTON>
+				</DIV>
 			</DIV>
 		</DIV>
 	</BODY>

@@ -1,3 +1,10 @@
+:root{
+	--SIDE_WIDTH: 300px;
+	--PLATE_MARGIN: 10px;
+
+	background-color: rgb(213, 255, 241);
+}
+
 .SETUP_DISPLAY{
 	position: fixed;
 	top: 0px;
@@ -6,6 +13,30 @@
 	height: 100vh;
 
 	background-color: white;
+
+	padding: 10px;
+}
+
+.SIDE{
+	position: absolute;
+	top: var(--PLATE_MARGIN);
+	left: var(--PLATE_MARGIN);
+	width: calc(var(--SIDE_WIDTH) - var(--PLATE_MARGIN));
+	height: calc(100vh - (var(--PLATE_MARGIN) * 2));
+
+	border: solid 1px;
+
+	padding: 10px;
+}
+
+.MAIN{
+	position: absolute;
+	top: var(--PLATE_MARGIN);
+	left: calc(var(--SIDE_WIDTH) + var(--PLATE_MARGIN));
+	width: calc(100vw - var(--SIDE_WIDTH) - (var(--PLATE_MARGIN) * 2));
+	height: calc(100vh - (var(--PLATE_MARGIN) * 2));
+
+	border: solid 1px;
 
 	padding: 10px;
 }
