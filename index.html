@@ -57,6 +57,12 @@
 				<DIV ID="SITE_VIEWER_TOTP">
 					<DIV ID="SITE_VIEWER_TOTP_ENABLE">
 						<DIV ID="SITE_VIEWER_TOTP_ENABLE_CODE"></DIV>
+						<DIV>
+							<SPAN ID="SITE_VIEWER_TOTP_ENABLE_NOKRI_PERIOD"></SPAN>
+							<PROGRESS MIN="0" MAX="100" ID="SITE_VIEWER_TOTP_ENABLE_NOKRI_PROGRESS"></PROGRESS>
+						</DIV>
+
+						<BUTTON onclick="totp_remove();">登録解除</BUTTON>
 					</DIV>
 					<DIV ID="SITE_VIEWER_TOTP_DISABLE">
 						<BUTTON onclick="totp_setting();">TOTPを追加</BUTTON>

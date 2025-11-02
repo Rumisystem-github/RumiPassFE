@@ -32,7 +32,11 @@ let mel = {
 			parent: document.getElementById("SITE_VIEWER_TOTP"),
 			enable: {
 				parent: document.getElementById("SITE_VIEWER_TOTP_ENABLE"),
-				code: document.getElementById("SITE_VIEWER_TOTP_ENABLE_CODE")
+				code: document.getElementById("SITE_VIEWER_TOTP_ENABLE_CODE"),
+				nokori: {
+					period: document.getElementById("SITE_VIEWER_TOTP_ENABLE_NOKRI_PERIOD"),
+					progress: document.getElementById("SITE_VIEWER_TOTP_ENABLE_NOKRI_PROGRESS"),
+				}
 			},
 			disable: {
 				parent: document.getElementById("SITE_VIEWER_TOTP_DISABLE")
@@ -169,7 +173,7 @@ function decode_base32(input) {
 	}
 
 	const byte_list = [];
-	for (let i = 0; i < bit.length; i++) {
+	for (let i = 0; i < bit.length; i += 8) {
 		byte_list.push(parseInt(bit.substring(i, i + 8), 2));
 	}
 
