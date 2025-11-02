@@ -1,6 +1,6 @@
 let totp_current_period = 1;//←0を入れるな
 let totp_current_digits = 0;
-let totp_current_key = 0;
+let totp_current_key = null;
 
 async function open_site_viewer(id) {
 	//初期化
@@ -165,6 +165,7 @@ async function totp_remove() {
 }
 
 setInterval(async () => {
+	if (totp_current_key == null) return;
 	const nokori = totp_current_period - (Math.floor(Date.now() / 1000) % totp_current_period);
 
 	mel.site_viewer.totp.enable.nokori.period.innerText = nokori;

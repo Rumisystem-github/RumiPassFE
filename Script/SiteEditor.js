@@ -15,6 +15,8 @@ async function open_site_editor(id) {
 	//データ
 	for (let i = 0; i < r.data.length; i++) {
 		const data = r.data[i];
+		if (data.NAME.startsWith("__")) continue;
+
 		const iv = decode_base64(data.IV);
 		const contents_encrypt = decode_base64(data.CONTENTS);
 		const contents_plain = await decrypt_text(crypt_key, iv, contents_encrypt);
@@ -88,6 +90,13 @@ async function site_editor_apply() {
 			"CONTENTS": encode_base64(encrypted.encrypt)
 		});
 	}
+
+	for (let i = 0; i < r.data.length; i++) {
+		if (r.data[i].NAME.startsWith("__")) {
+			data_list.push(r.data[i]);
+		}
+	}
+
 	await edit_site_data(id, data_list);
 
 	//名前
