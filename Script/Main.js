@@ -26,7 +26,18 @@ let mel = {
 	site_viewer: {
 		parent: document.getElementById("SITE_VIEWER"),
 		name: document.getElementById("SITE_VIEWER_NAME"),
-		data_list: document.getElementById("SITE_VIEWER_DATA_LIST")
+
+		data_list: document.getElementById("SITE_VIEWER_DATA_LIST"),
+		totp: {
+			parent: document.getElementById("SITE_VIEWER_TOTP"),
+			enable: {
+				parent: document.getElementById("SITE_VIEWER_TOTP_ENABLE"),
+				code: document.getElementById("SITE_VIEWER_TOTP_ENABLE_CODE")
+			},
+			disable: {
+				parent: document.getElementById("SITE_VIEWER_TOTP_DISABLE")
+			}
+		}
 	},
 	site_editor: {
 		parent: document.getElementById("SITE_EDITOR"),
@@ -147,6 +158,24 @@ function decode_base64(input) {
 	return byte_list;
 }
 
+function decode_base32(input) {
+	const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+	let bit = "";
+	for (let i = 0; i < input.length; i++) {
+		const char = input.charAt(i);
+		const val = alphabet.indexOf(char);
+		if (val === -1) continue;
+		bit += val.toString(2).padStart(5, "0");
+	}
+
+	const byte_list = [];
+	for (let i = 0; i < bit.length; i++) {
+		byte_list.push(parseInt(bit.substring(i, i + 8), 2));
+	}
+
+	return new Uint8Array(byte_list);
+}
+
 async function create_site_button() {
 	const q = await dialog.INPUT("サイトを追加", {TYPE:"TEXT", "NAME":"名前"});
 	if (q == null) return;
@@ -199,6 +228,7 @@ function refresh_site_list() {
 
 async function open_site_viewer(id) {
 	//初期化
+	mel.site_viewer.parent.dataset.id = id;
 	mel.site_viewer.data_list.replaceChildren();
 
 	const r = await get_site(id);
@@ -238,8 +268,100 @@ async function open_site_viewer(id) {
 	}
 
 	//TOTP
+	if (r.data.some(x=>x.NAME === "__TOTP")) {
+		mel.site_viewer.totp.enable.parent.style.display = "block";
+		mel.site_viewer.totp.disable.parent.style.display = "none";
+
+		//解読する
+		const encrypt_data = r.data.find(x=>x.NAME === "__TOTP");
+		const plain_data = await decrypt_text(crypt_key, decode_base64(encrypt_data.IV), decode_base64(encrypt_data.CONTENTS));
+		const totp_data = JSON.parse(plain_data);
+
+		//TOTP生成
+		let counter = Math.floor(Date.now() / 1000 / totp_data.period);
+
+		//カウントをビッグエンディアンに変換
+		const counter_byte = new Uint8Array(8);
+		for (let i = 7; i >= 0; i--) {
+			counter_byte[i] = counter & 0xFF;
+			counter >>= 8;
+		}
+
+		//鍵をCryptKeyに変換
+		const key = await crypto.subtle.importKey(
+			"raw",
+			decode_base64(totp_data.key),
+			{name: "HMAC", hash:"SHA-1"},
+			false,
+			["sign"]
+		);
+
+		//HMAC計算
+		const hmac = new Uint8Array(await crypto.subtle.sign("HMAC", key, counter_byte));
+
+		//うんちもみもみ
+		const offset = hmac[hmac.length - 1] & 0x0F;
+		const binary =
+			((hmac[offset] & 0x7F) << 24)     |
+			((hmac[offset + 1] & 0xFF) << 16) |
+			((hmac[offset + 2] & 0xFF) << 8)  |
+			(hmac[offset + 3] & 0xFF);
+
+		//もんだうんちをきれいにするお！
+		const code = (binary % 10 ** totp_data.digits).toString().padStart(totp_data.digits, "0");
+		mel.site_viewer.totp.enable.code.innerText = code;
+	} else {
+		mel.site_viewer.totp.disable.parent.style.display = "block";
+		mel.site_viewer.totp.enable.parent.style.display = "none";
+	}
 
 	mel.site_viewer.parent.style.display = "block";
+}
+
+async function totp_setting() {
+	const id = mel.site_viewer.parent.dataset.id;
+	const r = await get_site(id);
+	const crypt_key = key_list[r.site.KEY_ID];
+
+	const q = await dialog.INPUT("TOTPの鍵またはURLをください。", {TYPE:"TEXT", NAME:""});
+	if (q == null || q == "") return;
+
+	let key = null;
+	try {
+		const url = new URL(q);
+		if (url.protocol.toUpperCase() !== "OTPAUTH:" || url.searchParams.get("secret") == null) {
+			dialog.DIALOG("不正な入力値");
+			return;
+		}
+
+		key = url.searchParams.get("secret").toUpperCase();
+	} catch(ex) {
+		key = q.replace(/[^A-Za-z0-9]/g, "");
+		key = key.toUpperCase();
+	}
+
+	//Base32をUnit8Array化
+	const key_byte = decode_base32(key);
+
+	//データ化して暗号化
+	const totp_data = {
+		key: encode_base64(key_byte),
+		algorithm: "SHA-1",
+		digits: 6,
+		period: 30
+	};
+	const encrypt_data = await encrypt_text(crypt_key, JSON.stringify(totp_data));
+
+	//登録
+	let data = r.data;
+	data.push(
+		{
+			"NAME": "__TOTP",
+			"IV": encode_base64(encrypt_data.iv),
+			"CONTENTS": encode_base64(encrypt_data.encrypt)
+		}
+	);
+	await edit_site_data(id, data);
 }
 
 async function jump_site_editor() {

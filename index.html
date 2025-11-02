@@ -52,7 +52,16 @@
 			<DIV CLASS="SITE_VIEWER" ID="SITE_VIEWER" STYLE="display: none;">
 				<BUTTON onclick="jump_site_editor();">編集</BUTTON>
 				<DIV CLASS="NAME" ID="SITE_VIEWER_NAME"></DIV>
+
 				<DIV CLASS="DATA_LIST" ID="SITE_VIEWER_DATA_LIST"></DIV>
+				<DIV ID="SITE_VIEWER_TOTP">
+					<DIV ID="SITE_VIEWER_TOTP_ENABLE">
+						<DIV ID="SITE_VIEWER_TOTP_ENABLE_CODE"></DIV>
+					</DIV>
+					<DIV ID="SITE_VIEWER_TOTP_DISABLE">
+						<BUTTON onclick="totp_setting();">TOTPを追加</BUTTON>
+					</DIV>
+				</DIV>
 			</DIV>
 
 			<!--データ編集-->
