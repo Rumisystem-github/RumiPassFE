@@ -11,7 +11,7 @@ async function backup_and_download() {
 			"TYPE": "RUMIPASS_BACKUP",
 			"VERSION": "1.0",
 			"USER_ID": self_user.ID,
-			"KEY_LIST": ls_aes
+			"KEY_LIST": list
 		}
 	);
 	const blob = new Blob([contents], {type: "text/plain; charset=UTF-8"});

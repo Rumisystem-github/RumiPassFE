@@ -19,7 +19,8 @@ let mel = {
 			download: document.getElementById("SETUP_DONE_DOWNLOAD")
 		},
 		import: {
-			parent: document.getElementById("SETUP_IMPORT")
+			parent: document.getElementById("SETUP_IMPORT"),
+			file: document.getElementById("SETUP_IMPORT_FILE")
 		}
 	},
 	site_dir_list: document.getElementById("SITE_DIR_LIST"),
@@ -48,6 +49,9 @@ let mel = {
 		name: document.getElementById("SITE_EDITOR_NAME"),
 		host: document.getElementById("SITE_EDITOR_HOST"),
 		data_list: document.getElementById("SITE_EDITOR_DATA_LIST")
+	},
+	setting: {
+		parent: document.getElementById("SETTING")
 	}
 };
 
@@ -70,24 +74,27 @@ window.addEventListener("load", async (e)=>{
 
 		//初期設定済みかチェック
 		if (localStorage.getItem(local_storage_key.KeyList) == null) {
-			//初期設定画面を出す
-			//TODO:サーバーにセットアップ済みかをチェックしに行く
-			//mel.setup.parent.style.display = "block";
+			if ((await get_site_list()).length == 0) {
+				//初期設定画面を出す
+				l = LOAD_WAIT_PRINT("初期設定中...");
 
-			l = LOAD_WAIT_PRINT("初期設定中...");
+				//鍵設定
+				await setup_gen_key();
 
-			//鍵設定
-			await setup_gen_key();
+				//ダウンロードボタンを設定する
+				mel.setup.done.download.addEventListener("click", async (e)=>{
+					await backup_and_download();
+					window.location.reload();
+				});
 
-			//ダウンロードボタンを設定する
-			mel.setup.done.download.addEventListener("click", async (e)=>{
-				await backup_and_download();
-				window.location.reload();
-			});
+				//開く
+				mel.setup.done.parent.style.display = "block";
+			} else {
+				//復元画面
+				mel.setup.import.parent.style.display = "block";
+			}
 
-			//開く
 			mel.setup.parent.style.display = "block";
-			mel.setup.done.parent.style.display = "block";
 
 			//ロード画面閉じる
 			LOAD_WAIT_STOP(l, "OK");
@@ -127,6 +134,7 @@ window.addEventListener("load", async (e)=>{
 rspa.add_page_change_event_listener((e)=>{
 	mel.site_viewer.parent.style.display = "none";
 	mel.site_editor.parent.style.display = "none";
+	mel.setting.parent.style.display = "none";
 });
 
 rspa.set_endpoint("/", ()=>{
@@ -144,6 +152,10 @@ rspa.set_endpoint("/edit/:ID", (e)=>{
 	if (e.param.ID == null || e.param.ID == "") return;
 
 	open_site_editor(e.param.ID);
+});
+
+rspa.set_endpoint("/setting", (e)=>{
+	open_setting();
 });
 
 function encode_base64(input) {
