@@ -240,6 +240,8 @@ async function open_site_viewer(id) {
 	//データリストにデータを
 	for (let i = 0; i < r.data.length; i++) {
 		const data = r.data[i];
+		if (data.NAME.startsWith("__")) continue;
+
 		const iv = decode_base64(data.IV);
 		const contents_encrypt = decode_base64(data.CONTENTS);
 		const contents_plain = await decrypt_text(crypt_key, iv, contents_encrypt);
